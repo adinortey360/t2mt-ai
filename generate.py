@@ -1,67 +1,31 @@
-import os
 import re
-import numpy as np
-import gensim.downloader as api
 
-# Download pre-trained GloVe embeddings
-glove_model = api.load("glove-wiki-gigaword-100")
+# Define a dictionary of articles
+articles = {
+    "article1": "Mental Health and Its Importance\nMental health refers to the overall psychological well-being of a person. It involves the way a person thinks, feels, and behaves. Mental health is important for everyone, as it affects our ability to cope with stress, make meaningful connections with others, and lead fulfilling lives. If you are experiencing mental health issues, it is important to seek help and support from a healthcare professional.",
+    "article2": "Common Mental Health Disorders\nThere are several common mental health disorders, including depression, anxiety, and bipolar disorder. These disorders can have a significant impact on a person's quality of life, making it difficult to perform everyday tasks and maintain healthy relationships. Treatment options for these disorders include medication, therapy, and lifestyle changes.",
+    "article3": "Self-Care for Mental Health\nSelf-care is an important aspect of maintaining good mental health. It involves taking care of your physical, emotional, and spiritual needs. Some self-care practices include getting enough sleep, eating a healthy diet, exercising regularly, and engaging in activities that bring you joy and fulfillment. Practicing self-care can help reduce stress, improve mood, and promote overall well-being.",
+    "article4": "Stigma and Mental Health\nStigma is a major barrier to seeking help for mental health issues. It can cause people to feel ashamed or embarrassed about their symptoms, and may prevent them from seeking the care and support they need. It is important to recognize that mental health issues are common and treatable, and to promote understanding and acceptance of those who are struggling with mental health challenges."
+}
 
-# Read in the corpus text file
-corpus_dir = "corpus/"
-corpus_files = [os.path.join(corpus_dir, f) for f in os.listdir(corpus_dir)]
-corpus_text = ""
-for corpus_file in corpus_files:
-    with open(corpus_file, "r") as f:
-        corpus_text += f.read()
+# Define a function to match user input to an article
+def match_article(input_text):
+    # Remove punctuation and convert to lowercase
+    input_text = re.sub(r'[^\w\s]', '', input_text).lower()
+    # Initialize variables to keep track of the best match so far
+    best_match_score = 0
+    best_match_article = "I'm sorry, I couldn't find an article that matches your query."
+    # Loop through each article and calculate a score based on word matches
+    for article_key, article_text in articles.items():
+        article_score = sum([1 for word in article_text.split() if word.lower() in input_text])
+        if article_score > best_match_score:
+            best_match_score = article_score
+            best_match_article = article_text
+    # Return the best matching article
+    return best_match_article
 
-# Preprocess the corpus text
-corpus_text = re.sub(r"[^a-zA-Z0-9\s]", "", corpus_text)  # remove punctuation
-corpus_text = corpus_text.lower()  # convert to lowercase
-
-# Build the vocabulary
-words = corpus_text.split()
-unique_words = sorted(set(words))
-vocab_size = len(unique_words)
-word_to_idx = {word: idx for idx, word in enumerate(unique_words)}
-
-# Build the embeddings matrix
-embedding_dim = glove_model.vector_size
-embeddings = np.zeros((vocab_size, embedding_dim))
-for word, idx in word_to_idx.items():
-    try:
-        embeddings[idx] = glove_model[word]
-    except KeyError:
-        pass
-
-# Define a function to get the embedding for a word
-def get_embedding(word):
-    idx = word_to_idx[word]
-    return embeddings[idx]
-
-# Define a function to predict the next word given an input text
-def predict_next_word(input_text):
-    input_words = input_text.split()
-    num_input_words = len(input_words)
-    if num_input_words == 0:
-        return ""
-    elif num_input_words == 1:
-        prev_word = input_words[0]
-        next_word = "like" if prev_word in ["i", "you", "he", "she", "it", "we", "they"] else ""
-    else:
-        prev_word = input_words[-1]
-        prev_embedding = get_embedding(prev_word)
-        similarities = embeddings.dot(prev_embedding)
-        similarities[word_to_idx[prev_word]] = -np.inf
-        max_idx = np.argmax(similarities)
-        next_word = unique_words[max_idx]
-    return next_word
-
-
-input_text = "every pet"
-max_length = 10
-for i in range(max_length):
-    next_word = predict_next_word(input_text)
-    if next_word == "":
-        break
-    input_text += " " + next_word
-print(f"The generated sequence is '{input_text}'.")
+# Test the search engine
+while True:
+    user_input = input("Please enter a query about mental health: ")
+    best_match_article = match_article(user_input)
+    print("The best article that matches your query is:\n", best_match_article)
