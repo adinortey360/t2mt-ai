@@ -1,5 +1,5 @@
 import os
-import json
+import sqlite3
 import string
 
 def extract_sentences_from_file(filename):
@@ -40,5 +40,28 @@ corpus_folder = "corpus"
 sentences = extract_sentences_from_corpus(corpus_folder)
 unique_words = find_unique_words(sentences)
 
-with open("models/unique_words.json", "w") as outfile:
-    json.dump(unique_words, outfile, indent=4)
+# Create a new SQLite database
+conn = sqlite3.connect("unique_words.db")
+c = conn.cursor()
+
+# Create a table for unique words
+c.execute("CREATE TABLE unique_words (word TEXT, count INT)")
+
+# Insert each unique word into the table
+for word, data in unique_words.items():
+    count = data["count"]
+    c.execute("INSERT INTO unique_words VALUES (?, ?)", (word, count))
+
+# Create a table for preceding words
+c.execute("CREATE TABLE preceding_words (word TEXT, preceding_word TEXT)")
+
+# Insert each preceding word into the table
+for word, data in unique_words.items():
+    preceding_words = data["preceding_words"]
+    for preceding_word_list in preceding_words:
+        for preceding_word in preceding_word_list:
+            c.execute("INSERT INTO preceding_words VALUES (?, ?)", (word, preceding_word))
+
+# Commit changes and close the connection
+conn.commit()
+conn.close()
