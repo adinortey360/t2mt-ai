@@ -58,7 +58,7 @@ def match_paragraph(input_text):
     if len(matches) > 0:
         best_match_paragraph = matches[0][0]
     # Return the best matching paragraph
-    return best_match_paragraph
+    return best_match_paragraph.replace('\n', '<br/>')
 
 # Define a handler to handle incoming HTTP requests
 class MyHandler(http.server.SimpleHTTPRequestHandler):

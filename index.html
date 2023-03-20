@@ -2,8 +2,8 @@
 <html>
 
 <head>
-    <title>ChatGPT Clone</title>
-    <style>
+    <title>T2MT AI</title>
+    <!-- <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f7f7f7;
@@ -19,7 +19,7 @@
         #chat-form {
             display: flex;
             margin: 0 auto;
-            max-width: 500px;
+            max-width: 90%;
         }
 
         #user-input {
@@ -54,7 +54,7 @@
 
         #chat-output {
             margin: 0 auto;
-            max-width: 500px;
+            max-width: 90%;
             margin-top: 30px;
             background-color: #fff;
             border-radius: 5px;
@@ -66,7 +66,8 @@
 
         #chat-output p {
             margin: 0;
-            line-height: 1.5;
+            line-height: 1.8 !important;
+            padding: 28px;
         }
 
         #chat-output p strong {
@@ -78,10 +79,10 @@
         }
 
         #chat-output {
-            height: 300px;
+            height: 600px;
             overflow: auto;
             border: 1px solid #ccc;
-            padding: 10px;
+            padding: 0px;
         }
 
         #chat-output p {
@@ -93,34 +94,133 @@
         #chat-output p strong {
             font-weight: bold;
         }
+    </style> -->
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333333;
+            color: #ffffff;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            font-size: 36px;
+        }
+
+        #chat-form {
+            display: flex;
+            margin: 0 auto;
+            max-width: 90%;
+        }
+
+        #user-input {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #1d1d1d;
+            color: #ffffff;
+            box-shadow: 0px 2px 5px rgba(255, 255, 255, 0.1);
+        }
+
+        #user-input:focus {
+            outline: none;
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            cursor: pointer;
+            box-shadow: 0px 2px 5px rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #3e8e41;
+        }
+
+        #chat-output {
+            margin: 0 auto;
+            max-width: 90%;
+            margin-top: 30px;
+            background-color: #1d1d1d;
+            color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            overflow-y: scroll;
+            max-height: 500px;
+        }
+
+        #chat-output p {
+            margin: 0;
+            line-height: 1.8 !important;
+            padding: 28px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        #chat-output p strong {
+            font-weight: bold;
+        }
+
+        #chat-output p:nth-child(even) {
+            background-color: #2b2b2b;
+        }
+
+        #chat-output {
+            height: 600px;
+            overflow: auto;
+            padding: 0px;
+        }
+
+        #chat-output p {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #ffffff;
+        }
+
+        #chat-output p strong {
+            font-weight: bold;
+        }
+
     </style>
 </head>
 
 <body>
-    <h1>T2MT AI</h1>
+   
+    <div id="chat-output"></div>
+    <br />
     <form id="chat-form">
         <input type="text" id="user-input" placeholder="Type your prompt here...">
         <button type="submit">Send</button>
     </form>
-    <div id="chat-output"></div>
-
     <script>
         const chatForm = document.getElementById('chat-form');
-        const userInput = document.getElementById('user-input');
-        const chatOutput = document.getElementById('chat-output');
+const userInput = document.getElementById('user-input');
+const chatOutput = document.getElementById('chat-output');
 
-        chatForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const prompt = userInput.value;
-            fetch(`/api?${prompt}`)
-                .then(response => response.text())
-                .then(data => {
-                    chatOutput.innerHTML += `<p><strong>You:</strong> ${prompt}</p>`;
-                    chatOutput.innerHTML += `<p><strong>T2MT:</strong> ${data}</p>`;
-                    chatOutput.scrollTop = chatOutput.scrollHeight;
-                });
-            userInput.value = '';
+chatForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const prompt = userInput.value;
+    fetch(`/api?${prompt}`)
+        .then(response => response.text())
+        .then(data => {
+            chatOutput.innerHTML += `<p><strong>You:</strong> ${prompt}</p>`;
+            chatOutput.innerHTML += `<p><strong>T2MT:</strong> ${data.split('\\n').join('<br>')}</p>`;
+            chatOutput.scrollTop = chatOutput.scrollHeight;
         });
+    userInput.value = '';
+});
     </script>
 </body>
 
