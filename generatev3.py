@@ -4,6 +4,9 @@ import re
 import mysql.connector
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import http.server
+import socketserver
+import urllib.parse
 
 # Connect to the database
 mydb = mysql.connector.connect(
@@ -61,7 +64,8 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith('/api?'):
             query = self.path[5:]
-            result = match_paragraph(query)
+            decoded_query = urllib.parse.unquote(query)
+            result = match_paragraph(decoded_query)
             self.send_response(200)
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
