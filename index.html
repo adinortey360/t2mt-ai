@@ -1,32 +1,127 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Chat Interface</title>
-  </head>
-  <body>
-    <h1>Chat Interface</h1>
+
+<head>
+    <title>ChatGPT Clone</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            font-size: 36px;
+        }
+
+        #chat-form {
+            display: flex;
+            margin: 0 auto;
+            max-width: 500px;
+        }
+
+        #user-input {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #user-input:focus {
+            outline: none;
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            cursor: pointer;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #3e8e41;
+        }
+
+        #chat-output {
+            margin: 0 auto;
+            max-width: 500px;
+            margin-top: 30px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow-y: scroll;
+            max-height: 500px;
+        }
+
+        #chat-output p {
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        #chat-output p strong {
+            font-weight: bold;
+        }
+
+        #chat-output p:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #chat-output {
+            height: 300px;
+            overflow: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        #chat-output p {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        #chat-output p strong {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>T2MT AI</h1>
     <form id="chat-form">
-      <input type="text" id="user-input" placeholder="Type your prompt here...">
-      <button type="submit">Send</button>
+        <input type="text" id="user-input" placeholder="Type your prompt here...">
+        <button type="submit">Send</button>
     </form>
     <div id="chat-output"></div>
 
     <script>
-      const chatForm = document.getElementById('chat-form');
-      const userInput = document.getElementById('user-input');
-      const chatOutput = document.getElementById('chat-output');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const chatOutput = document.getElementById('chat-output');
 
-      chatForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const prompt = userInput.value;
-        fetch(`/api?${prompt}`)
-          .then(response => response.text())
-          .then(data => {
-            chatOutput.innerHTML += `<p><strong>You:</strong> ${prompt}</p>`;
-            chatOutput.innerHTML += `<p><strong>T2MT:</strong> ${data}</p>`;
-          });
-        userInput.value = '';
-      });
+        chatForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const prompt = userInput.value;
+            fetch(`/api?${prompt}`)
+                .then(response => response.text())
+                .then(data => {
+                    chatOutput.innerHTML += `<p><strong>You:</strong> ${prompt}</p>`;
+                    chatOutput.innerHTML += `<p><strong>T2MT:</strong> ${data}</p>`;
+                    chatOutput.scrollTop = chatOutput.scrollHeight;
+                });
+            userInput.value = '';
+        });
     </script>
-  </body>
+</body>
+
 </html>

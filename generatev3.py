@@ -7,6 +7,7 @@ from nltk.tokenize import word_tokenize
 import http.server
 import socketserver
 import urllib.parse
+import signal
 
 # Connect to the database
 mydb = mysql.connector.connect(
@@ -73,7 +74,14 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
         else:
             super().do_GET()
 
+# Define a signal handler to gracefully stop the server
+def signal_handler(sig, frame):
+    print('Shutting down server...')
+    httpd.shutdown()
+
 # Start the HTTP server
-with socketserver.TCPServer(("", 8000), MyHandler) as httpd:
-    print("Server started at http://localhost:8000/")
+with socketserver.TCPServer(("", 5200), MyHandler) as httpd:
+    print("Server started at http://localhost:5200/")
+    # Register the signal handler to handle the keyboard interrupt signal
+    signal.signal(signal.SIGINT, signal_handler)
     httpd.serve_forever()
