@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>T2MT Chatbot</title>
+</head>
+<body>
+	<h1>T2MT Chatbot</h1>
+	<form id="prompt-form">
+		<label for="prompt">Enter your prompt:</label><br>
+		<input type="text" id="prompt" name="prompt"><br><br>
+		<input type="submit" value="Submit">
+	</form>
+	<div id="response"></div>
+
+	<script>
+		// Add event listener to the form submit button
+		document.getElementById("prompt-form").addEventListener("submit", function(event) {
+			// Prevent the form from submitting
+			event.preventDefault();
+
+			// Get the input prompt
+			var prompt = document.getElementById("prompt").value;
+
+			// Send a POST request to the chatbot API
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "http://localhost:8000/chatbot", true);
+			xhr.setRequestHeader("Content-type", "application/json");
+			xhr.onreadystatechange = function() {
+				if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+					// Display the response in the "response" div
+					document.getElementById("response").innerHTML = "<strong>Bot:</strong> " + JSON.parse(this.responseText).response;
+				}
+			};
+			xhr.send(JSON.stringify({ prompt: prompt }));
+		});
+	</script>
+</body>
+</html>
