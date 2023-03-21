@@ -8,6 +8,10 @@ import http.server
 import socketserver
 import urllib.parse
 import signal
+import os
+import sys
+sys.path.append(os.path.abspath('lib'))
+from text_summarizer import TextSummarizer
 
 # Connect to the database
 mydb = mysql.connector.connect(
@@ -58,7 +62,11 @@ def match_paragraph(input_text):
     if len(matches) > 0:
         best_match_paragraph = matches[0][0]
     # Return the best matching paragraph
-    return best_match_paragraph.replace('\n', '<br/>')
+    summarizer = TextSummarizer()
+    text = best_match_paragraph # Input text
+    summary = summarizer.summarize(text, num_sentences=2)
+    print(summary)
+    return summary
 
 # Define a handler to handle incoming HTTP requests
 class MyHandler(http.server.SimpleHTTPRequestHandler):
@@ -80,8 +88,8 @@ def signal_handler(sig, frame):
     httpd.shutdown()
 
 # Start the HTTP server
-with socketserver.TCPServer(("", 5200), MyHandler) as httpd:
-    print("Server started at http://localhost:5200/")
+with socketserver.TCPServer(("", 6200), MyHandler) as httpd:
+    print("Server started at http://localhost:6200/")
     # Register the signal handler to handle the keyboard interrupt signal
     signal.signal(signal.SIGINT, signal_handler)
     httpd.serve_forever()
